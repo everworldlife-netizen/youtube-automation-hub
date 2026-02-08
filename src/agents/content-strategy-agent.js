@@ -3,13 +3,13 @@
  * Analyzes YouTube trends, researches niches, identifies viral patterns
  */
 
-const OpenAI = require('openai');
+const { createAIClient, getModel } = require('../utils/ai-client');
 
 class ContentStrategyAgent {
   constructor(config) {
     this.config = config;
-    const apiKey = config.openaiKey || process.env.OPENAI_API_KEY;
-    this.client = apiKey ? new OpenAI({ apiKey }) : null;
+    this.client = createAIClient(config);
+    this.model = getModel(config);
   }
 
   /**
@@ -58,7 +58,7 @@ class ContentStrategyAgent {
     `;
 
     const response = await this.client.chat.completions.create({
-      model: 'gpt-4',
+      model: this.model,
       messages: [{ role: 'user', content: trendPrompt }],
       temperature: 0.7,
       max_tokens: 500
@@ -87,7 +87,7 @@ class ContentStrategyAgent {
     `;
 
     const response = await this.client.chat.completions.create({
-      model: 'gpt-4',
+      model: this.model,
       messages: [{ role: 'user', content: analysisPrompt }],
       temperature: 0.7,
       max_tokens: 500
@@ -153,7 +153,7 @@ class ContentStrategyAgent {
     `;
 
     const response = await this.client.chat.completions.create({
-      model: 'gpt-4',
+      model: this.model,
       messages: [{ role: 'user', content: strategyPrompt }],
       temperature: 0.7,
       max_tokens: 800
@@ -188,7 +188,7 @@ class ContentStrategyAgent {
     `;
 
     const response = await this.client.chat.completions.create({
-      model: 'gpt-4',
+      model: this.model,
       messages: [{ role: 'user', content: trendingPrompt }],
       temperature: 0.5,
       max_tokens: 1000

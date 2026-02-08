@@ -3,13 +3,13 @@
  * Generates engaging, optimized video scripts
  */
 
-const OpenAI = require('openai');
+const { createAIClient, getModel } = require('../utils/ai-client');
 
 class ScriptWriterAgent {
   constructor(config) {
     this.config = config;
-    const apiKey = config.openaiKey || process.env.OPENAI_API_KEY;
-    this.client = apiKey ? new OpenAI({ apiKey }) : null;
+    this.client = createAIClient(config);
+    this.model = getModel(config);
   }
 
   /**
@@ -56,7 +56,7 @@ class ScriptWriterAgent {
     `;
 
     const response = await this.client.chat.completions.create({
-      model: 'gpt-4',
+      model: this.model,
       messages: [{ role: 'user', content: scriptPrompt }],
       temperature: 0.8,
       max_tokens: 2000
@@ -102,7 +102,7 @@ class ScriptWriterAgent {
     `;
 
     const response = await this.client.chat.completions.create({
-      model: 'gpt-4',
+      model: this.model,
       messages: [{ role: 'user', content: optimizationPrompt }],
       temperature: 0.6,
       max_tokens: 800
@@ -150,7 +150,7 @@ class ScriptWriterAgent {
     `;
 
     const response = await this.client.chat.completions.create({
-      model: 'gpt-4',
+      model: this.model,
       messages: [{ role: 'user', content: testPrompt }],
       temperature: 0.5,
       max_tokens: 600

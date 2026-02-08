@@ -3,15 +3,15 @@
  * Generates eye-catching thumbnails using AI image generation
  */
 
-const OpenAI = require('openai');
+const { createAIClient, getModel } = require('../utils/ai-client');
 const fs = require('fs');
 const path = require('path');
 
 class ThumbnailDesignAgent {
   constructor(config) {
     this.config = config;
-    const apiKey = config.openaiKey || process.env.OPENAI_API_KEY;
-    this.client = apiKey ? new OpenAI({ apiKey }) : null;
+    this.client = createAIClient(config);
+    this.model = getModel(config);
     this.outputDir = config.videoOutputDir || './videos';
   }
 
@@ -68,7 +68,7 @@ class ThumbnailDesignAgent {
     `;
 
     const response = await this.client.chat.completions.create({
-      model: 'gpt-4',
+      model: this.model,
       messages: [{ role: 'user', content: conceptPrompt }],
       temperature: 0.8,
       max_tokens: 400
@@ -88,10 +88,15 @@ class ThumbnailDesignAgent {
   }
 
   /**
-   * Generate image using DALL-E
+   * Generate image using DALL-E (OpenAI only) or fallback to ImageMagick
    */
   async generateImage(concept, title) {
     const outputPath = path.join(this.outputDir, `thumbnail_${Date.now()}.png`);
+
+    // DALL-E is only available with OpenAI provider
+    if (this.config.aiProvider === 'gemini') {
+      return this.generateFallbackThumbnail(concept, title, outputPath);
+    }
 
     try {
       const response = await this.client.images.generate({
@@ -103,14 +108,43 @@ class ThumbnailDesignAgent {
       });
 
       const imageUrl = response.data[0].url;
-
-      // Download and save image
       await this.downloadImage(imageUrl, outputPath);
 
       console.log(`Thumbnail generated: ${outputPath}`);
       return outputPath;
     } catch (error) {
       console.error('DALL-E image generation failed:', error);
+      return this.generateFallbackThumbnail(concept, title, outputPath);
+    }
+  }
+
+  /**
+   * Fallback thumbnail using ImageMagick (when DALL-E is unavailable)
+   */
+  generateFallbackThumbnail(concept, title, outputPath) {
+    try {
+      const { execSync } = require('child_process');
+      const dir = path.dirname(outputPath);
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+
+      const text = (concept.textOverlay || title || 'Untitled').replace(/"/g, '\\"');
+      const command = [
+        'convert -size 1280x720',
+        'xc:#1a1a2e',
+        '-fill white',
+        '-gravity center',
+        '-pointsize 48',
+        `-annotate +0+0 "${text}"`,
+        `"${outputPath}"`
+      ].join(' ');
+
+      execSync(command, { stdio: 'ignore' });
+      console.log(`Fallback thumbnail generated: ${outputPath}`);
+      return outputPath;
+    } catch {
+      console.warn('Fallback thumbnail generation failed');
       return null;
     }
   }
