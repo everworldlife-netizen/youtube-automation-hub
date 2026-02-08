@@ -38,6 +38,9 @@
                           # Edit .env with your API keys
                           nano .env
 
+                          # Keep secrets private: never paste real keys in issues, PRs, or chat
+                          # If a key is exposed, revoke/rotate it immediately in the provider console
+
                           # Start the automation
                           npm start
 
@@ -58,6 +61,9 @@
                           YOUTUBE_CLIENT_ID=your_id
                           YOUTUBE_CLIENT_SECRET=your_secret
                           YOUTUBE_REFRESH_TOKEN=your_token
+
+                          # Optional Gemini API key (exact variable name, no spaces)
+                          GOOGLE_API_KEY=your_google_api_key
 
                           # Automation
                           UPLOAD_SCHEDULE=daily
