@@ -118,6 +118,65 @@ class DashboardAPI {
       hub.stopAutomationMode();
       res.json({ status: 'Automation mode stopped' });
     });
+
+    // === Channel-First Automation Endpoints ===
+
+    // Analyze my channel
+    app.post('/api/channel/analyze', async (req, res) => {
+      const { channelUrl } = req.body;
+
+      if (!channelUrl) {
+        return res.status(400).json({ error: 'channelUrl is required' });
+      }
+
+      try {
+        const analysis = await hub.analyzeMyChannel(channelUrl);
+        res.json(analysis);
+      } catch (error) {
+        res.status(500).json({ error: error.message });
+      }
+    });
+
+    // Get cached channel data
+    app.get('/api/channel/data', (req, res) => {
+      const data = hub.getChannelData();
+      if (!data) {
+        return res.status(404).json({ error: 'No channel analyzed yet. Use /api/channel/analyze first.' });
+      }
+      res.json(data);
+    });
+
+    // Generate video from a specific recommendation
+    app.post('/api/channel/generate', async (req, res) => {
+      const { recommendation } = req.body;
+
+      if (!recommendation) {
+        return res.status(400).json({ error: 'recommendation object is required' });
+      }
+
+      try {
+        const result = await hub.generateFromRecommendation(recommendation);
+        res.json(result);
+      } catch (error) {
+        res.status(500).json({ error: error.message });
+      }
+    });
+
+    // One-click: analyze channel + pick best idea + generate everything
+    app.post('/api/channel/one-click', async (req, res) => {
+      const { channelUrl, videoIndex } = req.body;
+
+      if (!channelUrl) {
+        return res.status(400).json({ error: 'channelUrl is required' });
+      }
+
+      try {
+        const result = await hub.oneClickAutomate(channelUrl, videoIndex || 0);
+        res.json(result);
+      } catch (error) {
+        res.status(500).json({ error: error.message });
+      }
+    });
   }
 }
 

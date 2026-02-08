@@ -13,6 +13,7 @@ const ThumbnailDesignAgent = require('../agents/thumbnail-design-agent');
 const VideoGenerationEngine = require('../engines/video-generation-engine');
 const YouTubePublisher = require('../services/youtube-publisher');
 const AnalyticsService = require('../services/analytics-service');
+const ChannelAnalyzer = require('../services/channel-analyzer');
 const ConfigManager = require('../utils/config-manager');
 
 class YouTubeAutomationHub {
@@ -24,9 +25,11 @@ class YouTubeAutomationHub {
       thumbnail: new ThumbnailDesignAgent(this.config),
       videoEngine: new VideoGenerationEngine(this.config),
       publisher: new YouTubePublisher(this.config),
-      analytics: new AnalyticsService(this.config)
+      analytics: new AnalyticsService(this.config),
+      channelAnalyzer: new ChannelAnalyzer(this.config)
     };
 
+    this.channelData = null; // Stores channel analysis results
     this.queue = [];
     this.isProcessing = false;
     this.logger = this.createLogger();
@@ -215,6 +218,112 @@ class YouTubeAutomationHub {
       channelsConnected: Object.keys(this.config.channels || {}).length,
       lastUpload: this.config.lastUpload || 'Never',
       aiCostThisMonth: this.calculateMonthlyCost()
+    };
+  }
+
+  /**
+   * Analyze your channel - the starting point for everything
+   */
+  async analyzeMyChannel(channelUrl) {
+    this.logger.info(`Analyzing channel: ${channelUrl}`);
+    this.channelData = await this.agents.channelAnalyzer.analyzeChannel(channelUrl);
+    this.logger.success('Channel analysis complete');
+    return this.channelData;
+  }
+
+  /**
+   * Get cached channel data
+   */
+  getChannelData() {
+    return this.channelData;
+  }
+
+  /**
+   * One-click: research channel + generate video ideas
+   */
+  async researchAndRecommend(channelUrl) {
+    this.logger.info('Starting full channel research...');
+
+    // Analyze the channel if not already done or if URL changed
+    if (!this.channelData || this.channelData.channelUrl !== channelUrl) {
+      this.channelData = await this.agents.channelAnalyzer.analyzeChannel(channelUrl);
+    }
+
+    return this.channelData;
+  }
+
+  /**
+   * One-click: pick best idea and generate the full video
+   * Takes a recommendation from the channel analysis and runs the full pipeline
+   */
+  async generateFromRecommendation(recommendation) {
+    if (!recommendation) {
+      throw new Error('No recommendation provided. Run channel analysis first.');
+    }
+
+    this.logger.info(`Generating video for: "${recommendation.title}"`);
+
+    // Build a strategy from the recommendation + channel data
+    const strategy = {
+      topic: recommendation.title,
+      hook: recommendation.hook,
+      targetEmotion: recommendation.targetEmotion,
+      tags: recommendation.suggestedTags || [],
+      channelProfile: this.channelData?.profile || {},
+      viralTrends: this.channelData?.viralTrends || {},
+      timestamp: new Date().toISOString()
+    };
+
+    const contentType = recommendation.contentType || 'short';
+
+    // Generate script using the enriched strategy
+    this.logger.info('Generating script...');
+    const script = await this.agents.scriptWriter.generateScript(strategy, contentType);
+
+    // Generate thumbnail
+    this.logger.info('Generating thumbnail...');
+    const thumbnail = await this.agents.thumbnail.generateThumbnail(strategy, script);
+
+    return {
+      success: true,
+      recommendation,
+      strategy,
+      script,
+      thumbnail,
+      contentType
+    };
+  }
+
+  /**
+   * Full one-click automation: analyze channel -> pick best idea -> generate everything
+   */
+  async oneClickAutomate(channelUrl, videoIndex = 0) {
+    this.logger.info('Starting one-click automation...');
+
+    // Step 1: Research the channel
+    const research = await this.researchAndRecommend(channelUrl);
+
+    if (!research.recommendations || research.recommendations.length === 0) {
+      throw new Error('No video recommendations generated. Try again.');
+    }
+
+    // Step 2: Pick the best recommendation
+    const picked = research.recommendations[videoIndex] || research.recommendations[0];
+    this.logger.info(`Selected idea: "${picked.title}" (viral score: ${picked.estimatedViralScore})`);
+
+    // Step 3: Generate the video content
+    const result = await this.generateFromRecommendation(picked);
+
+    this.logger.success('One-click automation complete!');
+
+    return {
+      ...result,
+      channelAnalysis: {
+        channelName: research.channelName,
+        niche: research.profile?.niche,
+        competitorsFound: research.competitors?.length || 0,
+        totalRecommendations: research.recommendations.length
+      }
     };
   }
 

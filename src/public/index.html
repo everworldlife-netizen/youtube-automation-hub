@@ -21,81 +21,47 @@
       border-bottom: 2px solid #ff4444;
     }
     .header h1 { font-size: 22px; color: #fff; }
-    .header .status {
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 13px;
-      font-weight: 600;
-    }
+    .header .status { padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; }
     .status.online { background: #1b4332; color: #52b788; }
     .status.offline { background: #3d0000; color: #ff6b6b; }
 
     .container { max-width: 1100px; margin: 0 auto; padding: 24px; }
 
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 14px;
-      margin-bottom: 28px;
+    /* Step indicator */
+    .steps { display: flex; gap: 0; margin-bottom: 28px; }
+    .step {
+      flex: 1; padding: 14px 12px; text-align: center; font-size: 13px; font-weight: 600;
+      background: #1a1a3e; border: 1px solid #2a2a5e; color: #666; position: relative;
     }
-    .stat-card {
-      background: #1a1a3e;
-      border-radius: 10px;
-      padding: 18px;
-      text-align: center;
-      border: 1px solid #2a2a5e;
-    }
-    .stat-card .value { font-size: 28px; font-weight: 700; color: #ff4444; }
-    .stat-card .label { font-size: 12px; color: #888; margin-top: 4px; }
+    .step:first-child { border-radius: 8px 0 0 8px; }
+    .step:last-child { border-radius: 0 8px 8px 0; }
+    .step.active { background: #2d1b69; color: #fff; border-color: #ff4444; }
+    .step.done { background: #1b4332; color: #52b788; border-color: #52b788; }
+    .step .num { display: block; font-size: 20px; margin-bottom: 2px; }
 
-    .panels {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-    }
+    .panels { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
     @media (max-width: 768px) { .panels { grid-template-columns: 1fr; } }
-
     .panel {
-      background: #1a1a3e;
-      border-radius: 10px;
-      padding: 22px;
-      border: 1px solid #2a2a5e;
+      background: #1a1a3e; border-radius: 10px; padding: 22px; border: 1px solid #2a2a5e;
     }
     .panel h2 {
-      font-size: 16px;
-      margin-bottom: 16px;
-      color: #fff;
-      border-bottom: 1px solid #2a2a5e;
-      padding-bottom: 10px;
+      font-size: 16px; margin-bottom: 16px; color: #fff;
+      border-bottom: 1px solid #2a2a5e; padding-bottom: 10px;
     }
+    .panel.highlight { border-color: #ff4444; }
+    .full-width { grid-column: 1 / -1; }
 
     label { display: block; font-size: 13px; color: #aaa; margin-bottom: 4px; }
     input, select, textarea {
-      width: 100%;
-      padding: 10px 12px;
-      background: #0f0f23;
-      border: 1px solid #2a2a5e;
-      border-radius: 6px;
-      color: #e0e0e0;
-      font-size: 14px;
-      margin-bottom: 12px;
-      font-family: inherit;
+      width: 100%; padding: 10px 12px; background: #0f0f23; border: 1px solid #2a2a5e;
+      border-radius: 6px; color: #e0e0e0; font-size: 14px; margin-bottom: 12px; font-family: inherit;
     }
-    input:focus, select:focus, textarea:focus {
-      outline: none;
-      border-color: #ff4444;
-    }
+    input:focus, select:focus, textarea:focus { outline: none; border-color: #ff4444; }
     textarea { resize: vertical; min-height: 60px; }
 
     .btn {
-      padding: 10px 20px;
-      border: none;
-      border-radius: 6px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      width: 100%;
-      margin-bottom: 8px;
+      padding: 10px 20px; border: none; border-radius: 6px; font-size: 14px;
+      font-weight: 600; cursor: pointer; width: 100%; margin-bottom: 8px;
     }
     .btn-primary { background: #ff4444; color: #fff; }
     .btn-primary:hover { background: #e03c3c; }
@@ -103,34 +69,22 @@
     .btn-secondary:hover { background: #3a3a7e; }
     .btn-success { background: #1b4332; color: #52b788; }
     .btn-success:hover { background: #245a42; }
+    .btn-oneclick { background: linear-gradient(135deg, #ff4444, #ff8800); color: #fff; font-size: 16px; padding: 14px; }
+    .btn-oneclick:hover { background: linear-gradient(135deg, #e03c3c, #e07700); }
     .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
     .output {
-      background: #0a0a1a;
-      border: 1px solid #2a2a5e;
-      border-radius: 6px;
-      padding: 14px;
-      margin-top: 14px;
-      max-height: 400px;
-      overflow-y: auto;
-      font-family: 'Consolas', 'Monaco', monospace;
-      font-size: 13px;
-      line-height: 1.5;
-      white-space: pre-wrap;
-      word-break: break-word;
+      background: #0a0a1a; border: 1px solid #2a2a5e; border-radius: 6px; padding: 14px;
+      margin-top: 14px; max-height: 400px; overflow-y: auto;
+      font-family: 'Consolas', 'Monaco', monospace; font-size: 13px;
+      line-height: 1.5; white-space: pre-wrap; word-break: break-word;
     }
     .output.hidden { display: none; }
 
     .spinner {
-      display: inline-block;
-      width: 16px;
-      height: 16px;
-      border: 2px solid #555;
-      border-top-color: #ff4444;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      margin-right: 8px;
-      vertical-align: middle;
+      display: inline-block; width: 16px; height: 16px; border: 2px solid #555;
+      border-top-color: #ff4444; border-radius: 50%; animation: spin 0.8s linear infinite;
+      margin-right: 8px; vertical-align: middle;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
@@ -139,7 +93,30 @@
     .log-entry.success { color: #52b788; }
     .log-entry.error { color: #ff6b6b; }
 
-    .full-width { grid-column: 1 / -1; }
+    /* Video ideas list */
+    .idea-card {
+      background: #0f0f23; border: 1px solid #2a2a5e; border-radius: 8px;
+      padding: 14px; margin-bottom: 10px; cursor: pointer; transition: border-color 0.2s;
+    }
+    .idea-card:hover { border-color: #ff4444; }
+    .idea-card.selected { border-color: #52b788; background: #0f1f23; }
+    .idea-title { font-size: 14px; font-weight: 600; color: #fff; margin-bottom: 6px; }
+    .idea-meta { font-size: 12px; color: #888; }
+    .idea-meta span { margin-right: 14px; }
+    .viral-score { color: #ff4444; font-weight: 700; }
+    .idea-hook { font-size: 12px; color: #aaa; margin-top: 6px; font-style: italic; }
+
+    /* Channel profile card */
+    .profile-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13px; }
+    .profile-item { padding: 6px 0; }
+    .profile-label { color: #888; font-size: 11px; text-transform: uppercase; }
+    .profile-value { color: #fff; margin-top: 2px; }
+
+    .section-title {
+      font-size: 14px; font-weight: 600; color: #aaa; margin: 20px 0 10px;
+      text-transform: uppercase; letter-spacing: 1px;
+    }
+    .tag { display: inline-block; background: #2a2a5e; padding: 3px 10px; border-radius: 12px; font-size: 11px; margin: 2px; }
   </style>
 </head>
 <body>
@@ -151,65 +128,83 @@
 
 <div class="container">
 
-  <!-- Stats -->
-  <div class="stats-grid" id="statsGrid">
-    <div class="stat-card"><div class="value" id="statVideos">-</div><div class="label">Videos Generated</div></div>
-    <div class="stat-card"><div class="value" id="statPublished">-</div><div class="label">Published</div></div>
-    <div class="stat-card"><div class="value" id="statViews">-</div><div class="label">Total Views</div></div>
-    <div class="stat-card"><div class="value" id="statEngagement">-</div><div class="label">Avg Engagement</div></div>
-    <div class="stat-card"><div class="value" id="statChannels">-</div><div class="label">Channels</div></div>
-    <div class="stat-card"><div class="value" id="statCost">-</div><div class="label">AI Cost (Month)</div></div>
+  <!-- Step Progress -->
+  <div class="steps">
+    <div class="step active" id="step1"><span class="num">1</span>Enter Channel</div>
+    <div class="step" id="step2"><span class="num">2</span>Research & Analysis</div>
+    <div class="step" id="step3"><span class="num">3</span>Pick Video Idea</div>
+    <div class="step" id="step4"><span class="num">4</span>Generate Content</div>
   </div>
 
   <div class="panels">
 
-    <!-- Generate Script -->
-    <div class="panel">
-      <h2>Generate Script</h2>
-      <label>Topic</label>
-      <input type="text" id="scriptTopic" placeholder="e.g. Top 5 AI Tools in 2026">
-      <label>Content Type</label>
-      <select id="scriptType">
-        <option value="short">Short (60s)</option>
-        <option value="medium">Medium (5 min)</option>
-        <option value="long">Long (20 min)</option>
-      </select>
-      <button class="btn btn-primary" id="btnScript" onclick="generateScript()">Generate Script</button>
-      <div class="output hidden" id="scriptOutput"></div>
+    <!-- STEP 1: Channel Input -->
+    <div class="panel highlight full-width" id="panelChannelInput">
+      <h2>Your YouTube Channel</h2>
+      <p style="font-size:13px; color:#888; margin-bottom:14px;">
+        Paste your channel URL and we'll research your niche, find competitors, and generate viral video ideas tailored to your channel.
+      </p>
+      <label>Channel URL</label>
+      <input type="text" id="channelUrl" placeholder="https://www.youtube.com/@YourChannel">
+      <button class="btn btn-primary" id="btnAnalyze" onclick="analyzeChannel()">Analyze My Channel</button>
+      <div style="text-align:center; margin:10px 0; color:#555;">or</div>
+      <button class="btn btn-oneclick" id="btnOneClick" onclick="oneClickAutomate()">One-Click: Research + Generate Video</button>
     </div>
 
-    <!-- Trending Topics -->
-    <div class="panel">
-      <h2>Trending Topics</h2>
-      <label>Niche</label>
-      <input type="text" id="trendNiche" placeholder="e.g. tech, gaming, cooking (or leave empty)">
-      <button class="btn btn-secondary" id="btnTrending" onclick="getTrending()">Find Trending Topics</button>
-      <div class="output hidden" id="trendingOutput"></div>
+    <!-- STEP 2: Channel Profile + Competitors + Trends (hidden until analyzed) -->
+    <div class="panel hidden" id="panelProfile">
+      <h2>Channel Profile</h2>
+      <div id="profileContent"></div>
     </div>
 
-    <!-- Full Pipeline -->
-    <div class="panel">
-      <h2>Full Pipeline</h2>
-      <p style="font-size:13px; color:#888; margin-bottom:12px;">Research + Script + Thumbnail + Video + Upload</p>
-      <label>Topic</label>
-      <input type="text" id="pipelineTopic" placeholder="e.g. How AI is Changing Everything">
-      <label>Content Type</label>
-      <select id="pipelineType">
-        <option value="short">Short</option>
-        <option value="medium">Medium</option>
-        <option value="long">Long</option>
-      </select>
-      <button class="btn btn-success" id="btnPipeline" onclick="runPipeline()">Run Full Pipeline</button>
-      <div class="output hidden" id="pipelineOutput"></div>
+    <div class="panel hidden" id="panelCompetitors">
+      <h2>Competitors Found</h2>
+      <div id="competitorsContent"></div>
     </div>
 
-    <!-- Competitor Analysis -->
-    <div class="panel">
-      <h2>Competitor Analysis</h2>
-      <label>Channel URLs (one per line)</label>
-      <textarea id="competitorUrls" placeholder="https://www.youtube.com/@ChannelName"></textarea>
-      <button class="btn btn-secondary" id="btnCompetitors" onclick="analyzeCompetitors()">Analyze</button>
-      <div class="output hidden" id="competitorOutput"></div>
+    <div class="panel hidden full-width" id="panelTrends">
+      <h2>Viral Trends in Your Niche</h2>
+      <div id="trendsContent"></div>
+    </div>
+
+    <!-- STEP 3: Video Recommendations (hidden until analyzed) -->
+    <div class="panel hidden full-width" id="panelIdeas">
+      <h2>Video Ideas (ranked by viral potential)</h2>
+      <p style="font-size:13px; color:#888; margin-bottom:14px;">Click an idea to select it, then generate the script and thumbnail.</p>
+      <div id="ideasList"></div>
+      <button class="btn btn-success hidden" id="btnGenerate" onclick="generateFromIdea()">Generate Script + Thumbnail for Selected Idea</button>
+    </div>
+
+    <!-- STEP 4: Generated Content (hidden until generated) -->
+    <div class="panel hidden full-width" id="panelResult">
+      <h2>Generated Content</h2>
+      <div id="resultContent"></div>
+    </div>
+
+    <!-- Manual Tools (collapsed) -->
+    <div class="panel full-width">
+      <h2 style="cursor:pointer;" onclick="toggleManual()">Manual Tools (click to expand)</h2>
+      <div id="manualTools" class="hidden">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:14px;">
+          <div>
+            <label>Generate Script by Topic</label>
+            <input type="text" id="scriptTopic" placeholder="e.g. Top 5 AI Tools">
+            <select id="scriptType">
+              <option value="short">Short (60s)</option>
+              <option value="medium">Medium (5 min)</option>
+              <option value="long">Long (20 min)</option>
+            </select>
+            <button class="btn btn-secondary" id="btnScript" onclick="generateScript()">Generate Script</button>
+            <div class="output hidden" id="scriptOutput"></div>
+          </div>
+          <div>
+            <label>Find Trending Topics</label>
+            <input type="text" id="trendNiche" placeholder="e.g. tech, gaming, cooking">
+            <button class="btn btn-secondary" id="btnTrending" onclick="getTrending()">Find Topics</button>
+            <div class="output hidden" id="trendingOutput"></div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Activity Log -->
@@ -223,6 +218,8 @@
 
 <script>
   const API = '';
+  let channelData = null;
+  let selectedIdea = null;
 
   function log(msg, type = 'info') {
     const el = document.getElementById('activityLog');
@@ -231,25 +228,25 @@
     el.scrollTop = el.scrollHeight;
   }
 
-  function showOutput(id, data) {
-    const el = document.getElementById(id);
-    el.classList.remove('hidden');
-    if (typeof data === 'string') {
-      el.textContent = data;
-    } else {
-      el.textContent = JSON.stringify(data, null, 2);
-    }
-  }
-
   function setLoading(btnId, loading) {
     const btn = document.getElementById(btnId);
     if (loading) {
       btn.disabled = true;
       btn.dataset.origText = btn.textContent;
-      btn.innerHTML = '<span class="spinner"></span> Working...';
+      btn.innerHTML = '<span class="spinner"></span> Working... (this may take a minute)';
     } else {
       btn.disabled = false;
       btn.textContent = btn.dataset.origText;
+    }
+  }
+
+  function showEl(id) { document.getElementById(id).classList.remove('hidden'); }
+  function hideEl(id) { document.getElementById(id).classList.add('hidden'); }
+
+  function setStep(n) {
+    for (let i = 1; i <= 4; i++) {
+      const el = document.getElementById('step' + i);
+      el.className = 'step' + (i < n ? ' done' : i === n ? ' active' : '');
     }
   }
 
@@ -258,137 +255,259 @@
       headers: { 'Content-Type': 'application/json' },
       ...options
     });
-    return res.json();
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    return data;
+  }
+
+  // === STEP 1: Analyze Channel ===
+  async function analyzeChannel() {
+    const url = document.getElementById('channelUrl').value.trim();
+    if (!url) return alert('Paste your YouTube channel URL');
+
+    setLoading('btnAnalyze', true);
+    setLoading('btnOneClick', true);
+    log('Analyzing your channel... (researching niche, competitors, viral trends)');
+    setStep(2);
+
+    try {
+      channelData = await apiCall('/api/channel/analyze', {
+        method: 'POST',
+        body: JSON.stringify({ channelUrl: url })
+      });
+      log('Channel analysis complete!', 'success');
+      renderAnalysis();
+      setStep(3);
+    } catch (err) {
+      log('Analysis failed: ' + err.message, 'error');
+      setStep(1);
+    }
+    setLoading('btnAnalyze', false);
+    setLoading('btnOneClick', false);
+  }
+
+  // === ONE-CLICK: Research + Generate ===
+  async function oneClickAutomate() {
+    const url = document.getElementById('channelUrl').value.trim();
+    if (!url) return alert('Paste your YouTube channel URL');
+
+    if (!confirm('This will analyze your channel and generate a video script from the best idea. Continue?')) return;
+
+    setLoading('btnOneClick', true);
+    setLoading('btnAnalyze', true);
+    log('Starting one-click automation...');
+    setStep(2);
+
+    try {
+      const result = await apiCall('/api/channel/one-click', {
+        method: 'POST',
+        body: JSON.stringify({ channelUrl: url })
+      });
+
+      // Show the channel analysis
+      channelData = await apiCall('/api/channel/data');
+      renderAnalysis();
+
+      // Show the generated content
+      renderResult(result);
+      setStep(4);
+      log('One-click automation complete!', 'success');
+    } catch (err) {
+      log('One-click automation failed: ' + err.message, 'error');
+      setStep(1);
+    }
+    setLoading('btnOneClick', false);
+    setLoading('btnAnalyze', false);
+  }
+
+  // === Render channel analysis ===
+  function renderAnalysis() {
+    if (!channelData) return;
+    const p = channelData.profile || {};
+
+    // Profile card
+    document.getElementById('profileContent').innerHTML = `
+      <div class="profile-grid">
+        <div class="profile-item"><div class="profile-label">Niche</div><div class="profile-value">${p.niche || 'Unknown'}</div></div>
+        <div class="profile-item"><div class="profile-label">Style</div><div class="profile-value">${p.contentStyle || 'N/A'}</div></div>
+        <div class="profile-item"><div class="profile-label">Format</div><div class="profile-value">${p.videoFormat || 'N/A'}</div></div>
+        <div class="profile-item"><div class="profile-label">Posting Frequency</div><div class="profile-value">${p.postingFrequency || 'N/A'}</div></div>
+        <div class="profile-item"><div class="profile-label">Audience</div><div class="profile-value">${p.targetAudience?.ageRange || 'N/A'} - ${(p.targetAudience?.interests || []).join(', ')}</div></div>
+        <div class="profile-item"><div class="profile-label">Unique Angle</div><div class="profile-value">${p.uniqueAngle || 'N/A'}</div></div>
+      </div>
+      ${p.subNiches ? '<div style="margin-top:10px;">' + p.subNiches.map(s => '<span class="tag">' + s + '</span>').join('') + '</div>' : ''}
+      ${p.contentGaps ? '<div class="section-title">Content Gaps to Fill</div><ul style="font-size:13px;padding-left:18px;">' + p.contentGaps.map(g => '<li>' + g + '</li>').join('') + '</ul>' : ''}
+    `;
+    showEl('panelProfile');
+
+    // Competitors
+    const comps = channelData.competitors || [];
+    if (comps.length > 0) {
+      document.getElementById('competitorsContent').innerHTML = comps.map(c => `
+        <div style="padding:8px 0;border-bottom:1px solid #2a2a5e;">
+          <div style="font-weight:600;color:#fff;">${c.channelName} <span style="font-size:11px;color:#888;">(${c.subscriberRange || '?'})</span></div>
+          <div style="font-size:12px;color:#aaa;margin-top:4px;">${c.whyCompetitor || ''}</div>
+          ${c.strengths ? '<div style="margin-top:4px;">' + c.strengths.map(s => '<span class="tag">' + s + '</span>').join('') + '</div>' : ''}
+        </div>
+      `).join('');
+      showEl('panelCompetitors');
+    }
+
+    // Viral trends
+    const t = channelData.viralTrends || {};
+    if (t.hotTopics || t.effectiveHooks) {
+      let html = '';
+      if (t.hotTopics) html += '<div class="section-title">Hot Topics</div>' + t.hotTopics.map(x => '<span class="tag">' + x + '</span>').join('');
+      if (t.effectiveHooks) html += '<div class="section-title">Working Hooks</div><ul style="font-size:13px;padding-left:18px;">' + t.effectiveHooks.map(h => '<li>' + h + '</li>').join('') + '</ul>';
+      if (t.titlePatterns) html += '<div class="section-title">Title Patterns</div><ul style="font-size:13px;padding-left:18px;">' + t.titlePatterns.map(p => '<li>' + p + '</li>').join('') + '</ul>';
+      if (t.untappedOpportunities) html += '<div class="section-title">Untapped Opportunities</div><ul style="font-size:13px;padding-left:18px;">' + t.untappedOpportunities.map(o => '<li>' + o + '</li>').join('') + '</ul>';
+      document.getElementById('trendsContent').innerHTML = html;
+      showEl('panelTrends');
+    }
+
+    // Video Ideas
+    const ideas = channelData.recommendations || [];
+    if (ideas.length > 0) {
+      document.getElementById('ideasList').innerHTML = ideas.map((idea, i) => `
+        <div class="idea-card" id="idea-${i}" onclick="selectIdea(${i})">
+          <div class="idea-title">${idea.title}</div>
+          <div class="idea-meta">
+            <span class="viral-score">Viral: ${idea.estimatedViralScore || '?'}/100</span>
+            <span>Type: ${idea.contentType || 'short'}</span>
+            <span>Emotion: ${idea.targetEmotion || 'N/A'}</span>
+          </div>
+          <div class="idea-hook">Hook: "${idea.hook || 'N/A'}"</div>
+        </div>
+      `).join('');
+      showEl('panelIdeas');
+    }
+  }
+
+  // === STEP 3: Select an idea ===
+  function selectIdea(index) {
+    const ideas = channelData?.recommendations || [];
+    selectedIdea = ideas[index];
+
+    document.querySelectorAll('.idea-card').forEach((el, i) => {
+      el.className = 'idea-card' + (i === index ? ' selected' : '');
+    });
+
+    showEl('btnGenerate');
+    log(`Selected: "${selectedIdea.title}"`, 'info');
+  }
+
+  // === STEP 4: Generate from selected idea ===
+  async function generateFromIdea() {
+    if (!selectedIdea) return alert('Select a video idea first');
+
+    setLoading('btnGenerate', true);
+    log(`Generating content for: "${selectedIdea.title}"...`);
+    setStep(4);
+
+    try {
+      const result = await apiCall('/api/channel/generate', {
+        method: 'POST',
+        body: JSON.stringify({ recommendation: selectedIdea })
+      });
+      renderResult(result);
+      log('Content generated!', 'success');
+    } catch (err) {
+      log('Generation failed: ' + err.message, 'error');
+    }
+    setLoading('btnGenerate', false);
+  }
+
+  // === Render generated result ===
+  function renderResult(result) {
+    const s = result.script || {};
+    let html = '';
+
+    html += '<div class="section-title">Title</div>';
+    html += '<div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:12px;">' + (s.title || 'Untitled') + '</div>';
+
+    if (s.hook) {
+      html += '<div class="section-title">Hook (first 3 seconds)</div>';
+      html += '<div style="font-size:14px;color:#ff8800;margin-bottom:12px;font-style:italic;">"' + s.hook + '"</div>';
+    }
+
+    if (s.voiceoverScript) {
+      html += '<div class="section-title">Full Script</div>';
+      html += '<div class="output" style="max-height:300px;">' + s.voiceoverScript + '</div>';
+    }
+
+    if (s.description) {
+      html += '<div class="section-title">YouTube Description</div>';
+      html += '<div style="font-size:13px;color:#aaa;white-space:pre-wrap;">' + s.description + '</div>';
+    }
+
+    if (s.tags && s.tags.length) {
+      html += '<div class="section-title">Tags</div>';
+      html += s.tags.map(t => '<span class="tag">' + t + '</span>').join('');
+    }
+
+    if (s.keyMessages) {
+      html += '<div class="section-title">Key Messages</div>';
+      html += '<ul style="font-size:13px;padding-left:18px;">' + s.keyMessages.map(m => '<li>' + m + '</li>').join('') + '</ul>';
+    }
+
+    document.getElementById('resultContent').innerHTML = html;
+    showEl('panelResult');
+  }
+
+  // === Manual Tools Toggle ===
+  function toggleManual() {
+    const el = document.getElementById('manualTools');
+    el.classList.toggle('hidden');
+  }
+
+  // === Manual: Generate Script ===
+  async function generateScript() {
+    const topic = document.getElementById('scriptTopic').value.trim();
+    if (!topic) return alert('Enter a topic');
+    setLoading('btnScript', true);
+    log(`Generating script for "${topic}"...`);
+    try {
+      const data = await apiCall('/api/script', {
+        method: 'POST',
+        body: JSON.stringify({ topic, contentType: document.getElementById('scriptType').value })
+      });
+      const el = document.getElementById('scriptOutput');
+      el.classList.remove('hidden');
+      el.textContent = JSON.stringify(data, null, 2);
+      log('Script generated!', 'success');
+    } catch (err) { log('Failed: ' + err.message, 'error'); }
+    setLoading('btnScript', false);
+  }
+
+  // === Manual: Trending Topics ===
+  async function getTrending() {
+    const niche = document.getElementById('trendNiche').value.trim();
+    setLoading('btnTrending', true);
+    log('Finding trending topics...');
+    try {
+      const url = niche ? `/api/trending?niche=${encodeURIComponent(niche)}` : '/api/trending';
+      const data = await apiCall(url);
+      const el = document.getElementById('trendingOutput');
+      el.classList.remove('hidden');
+      el.textContent = JSON.stringify(data, null, 2);
+      log('Found trending topics!', 'success');
+    } catch (err) { log('Failed: ' + err.message, 'error'); }
+    setLoading('btnTrending', false);
   }
 
   // Health check
   async function checkHealth() {
     try {
-      const data = await apiCall('/api/health');
-      const badge = document.getElementById('statusBadge');
-      badge.textContent = 'Online';
-      badge.className = 'status online';
+      await apiCall('/api/health');
+      document.getElementById('statusBadge').textContent = 'Online';
+      document.getElementById('statusBadge').className = 'status online';
     } catch {
-      const badge = document.getElementById('statusBadge');
-      badge.textContent = 'Offline';
-      badge.className = 'status offline';
+      document.getElementById('statusBadge').textContent = 'Offline';
+      document.getElementById('statusBadge').className = 'status offline';
     }
   }
 
-  // Load stats
-  async function loadStats() {
-    try {
-      const s = await apiCall('/api/stats');
-      document.getElementById('statVideos').textContent = s.videosGenerated;
-      document.getElementById('statPublished').textContent = s.videosPublished;
-      document.getElementById('statViews').textContent = s.totalViews;
-      document.getElementById('statEngagement').textContent = s.avgEngagement + '%';
-      document.getElementById('statChannels').textContent = s.channelsConnected;
-      document.getElementById('statCost').textContent = '$' + s.aiCostThisMonth;
-    } catch {}
-  }
-
-  // Generate Script
-  async function generateScript() {
-    const topic = document.getElementById('scriptTopic').value.trim();
-    if (!topic) return alert('Enter a topic');
-
-    setLoading('btnScript', true);
-    log(`Generating script for "${topic}"...`);
-
-    try {
-      const data = await apiCall('/api/script', {
-        method: 'POST',
-        body: JSON.stringify({
-          topic,
-          contentType: document.getElementById('scriptType').value
-        })
-      });
-      showOutput('scriptOutput', data);
-      log(`Script generated: "${data.title || topic}"`, 'success');
-    } catch (err) {
-      log(`Script generation failed: ${err.message}`, 'error');
-      showOutput('scriptOutput', 'Error: ' + err.message);
-    }
-    setLoading('btnScript', false);
-  }
-
-  // Trending Topics
-  async function getTrending() {
-    const niche = document.getElementById('trendNiche').value.trim();
-    setLoading('btnTrending', true);
-    log(`Finding trending topics${niche ? ` in "${niche}"` : ''}...`);
-
-    try {
-      const url = niche ? `/api/trending?niche=${encodeURIComponent(niche)}` : '/api/trending';
-      const data = await apiCall(url);
-      showOutput('trendingOutput', data);
-      log(`Found ${Array.isArray(data) ? data.length : '?'} trending topics`, 'success');
-    } catch (err) {
-      log(`Trending lookup failed: ${err.message}`, 'error');
-      showOutput('trendingOutput', 'Error: ' + err.message);
-    }
-    setLoading('btnTrending', false);
-  }
-
-  // Full Pipeline
-  async function runPipeline() {
-    const topic = document.getElementById('pipelineTopic').value.trim();
-    if (!topic) return alert('Enter a topic');
-
-    if (!confirm(`This will run the full pipeline for "${topic}". This may take several minutes and use API credits. Continue?`)) return;
-
-    setLoading('btnPipeline', true);
-    log(`Starting full pipeline for "${topic}"...`);
-
-    try {
-      const data = await apiCall('/api/pipeline', {
-        method: 'POST',
-        body: JSON.stringify({
-          topic,
-          contentType: document.getElementById('pipelineType').value
-        })
-      });
-      showOutput('pipelineOutput', data);
-      if (data.videoUrl) {
-        log(`Pipeline complete! Video: ${data.videoUrl}`, 'success');
-      } else {
-        log('Pipeline completed', 'success');
-      }
-      loadStats();
-    } catch (err) {
-      log(`Pipeline failed: ${err.message}`, 'error');
-      showOutput('pipelineOutput', 'Error: ' + err.message);
-    }
-    setLoading('btnPipeline', false);
-  }
-
-  // Competitor Analysis
-  async function analyzeCompetitors() {
-    const raw = document.getElementById('competitorUrls').value.trim();
-    if (!raw) return alert('Enter at least one channel URL');
-
-    const channelUrls = raw.split('\n').map(u => u.trim()).filter(Boolean);
-    setLoading('btnCompetitors', true);
-    log(`Analyzing ${channelUrls.length} competitor(s)...`);
-
-    try {
-      const data = await apiCall('/api/competitors', {
-        method: 'POST',
-        body: JSON.stringify({ channelUrls })
-      });
-      showOutput('competitorOutput', data);
-      log('Competitor analysis complete', 'success');
-    } catch (err) {
-      log(`Competitor analysis failed: ${err.message}`, 'error');
-      showOutput('competitorOutput', 'Error: ' + err.message);
-    }
-    setLoading('btnCompetitors', false);
-  }
-
-  // Init
   checkHealth();
-  loadStats();
   setInterval(checkHealth, 30000);
 </script>
 
