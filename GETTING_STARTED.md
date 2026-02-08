@@ -74,6 +74,9 @@
 
                                                            # Edit .env with your API keys
                                                            nano .env  # or use your favorite editor
+
+                                                           # Keep secrets local only. Never share real keys in PRs/issues/chat.
+                                                           # If a key is ever exposed, revoke/rotate it immediately.
                                                            ```
 
                                                            Fill in the following:
@@ -86,6 +89,9 @@
                                                            # OR Google Gemini (free alternative)
                                                            GOOGLE_API_KEY=AIzaSyxxxxxxxxxxxxxxx
                                                            AI_PROVIDER=gemini
+
+                                                           # Note: variable names must be exact (example: GOOGLE_API_KEY).
+                                                           # Do not use keys with spaces like "YOUTUBE api".
 
                                                            # YouTube API
                                                            YOUTUBE_CLIENT_ID=xxxx.apps.googleusercontent.com
