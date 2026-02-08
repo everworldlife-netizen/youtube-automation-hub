@@ -2,6 +2,8 @@
   "aiProvider": "gemini",
   "openaiKey": "",
   "googleApiKey": "",
+  "openrouterKey": "",
+  "model": "",
   "youtubeClientId": "",
   "youtubeClientSecret": "",
   "youtubeRefreshToken": "",

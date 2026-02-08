@@ -33,6 +33,8 @@ class ConfigManager {
       aiProvider: process.env.AI_PROVIDER || fileConfig.aiProvider || 'openai',
       openaiKey: process.env.OPENAI_API_KEY || fileConfig.openaiKey || '',
       googleApiKey: process.env.GOOGLE_API_KEY || fileConfig.googleApiKey || '',
+      openrouterKey: process.env.OPENROUTER_API_KEY || fileConfig.openrouterKey || '',
+      model: process.env.AI_MODEL || fileConfig.model || '',
 
       // YouTube OAuth
       youtubeClientId: process.env.YOUTUBE_CLIENT_ID || fileConfig.youtubeClientId || '',
@@ -107,6 +109,10 @@ class ConfigManager {
 
     if (!config.googleApiKey && config.aiProvider === 'gemini') {
       issues.push('GOOGLE_API_KEY is required when using Gemini provider');
+    }
+
+    if (!config.openrouterKey && config.aiProvider === 'openrouter') {
+      issues.push('OPENROUTER_API_KEY is required when using OpenRouter provider');
     }
 
     if (!config.youtubeClientId || !config.youtubeClientSecret) {
