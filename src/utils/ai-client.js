@@ -10,12 +10,12 @@ const OpenAI = require('openai');
 const PROVIDERS = {
   gemini: {
     baseURL: 'https://generativelanguage.googleapis.com/v1beta/openai/',
-    defaultModel: 'gemini-2.0-flash',
+    defaultModel: 'gemini-3.0-flash',
     getKey: (config) => config.googleApiKey || process.env.GOOGLE_API_KEY
   },
   openrouter: {
     baseURL: 'https://openrouter.ai/api/v1',
-    defaultModel: 'google/gemini-2.0-flash-001',
+    defaultModel: 'google/gemini-3.0-flash',
     getKey: (config) => config.openrouterKey || process.env.OPENROUTER_API_KEY
   },
   openai: {
