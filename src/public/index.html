@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YouTube Automation Hub</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0f0f23;
+      color: #e0e0e0;
+      min-height: 100vh;
+    }
+    .header {
+      background: linear-gradient(135deg, #1a1a3e, #2d1b69);
+      padding: 20px 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid #ff4444;
+    }
+    .header h1 { font-size: 22px; color: #fff; }
+    .header .status {
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .status.online { background: #1b4332; color: #52b788; }
+    .status.offline { background: #3d0000; color: #ff6b6b; }
+
+    .container { max-width: 1100px; margin: 0 auto; padding: 24px; }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+    .stat-card {
+      background: #1a1a3e;
+      border-radius: 10px;
+      padding: 18px;
+      text-align: center;
+      border: 1px solid #2a2a5e;
+    }
+    .stat-card .value { font-size: 28px; font-weight: 700; color: #ff4444; }
+    .stat-card .label { font-size: 12px; color: #888; margin-top: 4px; }
+
+    .panels {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    @media (max-width: 768px) { .panels { grid-template-columns: 1fr; } }
+
+    .panel {
+      background: #1a1a3e;
+      border-radius: 10px;
+      padding: 22px;
+      border: 1px solid #2a2a5e;
+    }
+    .panel h2 {
+      font-size: 16px;
+      margin-bottom: 16px;
+      color: #fff;
+      border-bottom: 1px solid #2a2a5e;
+      padding-bottom: 10px;
+    }
+
+    label { display: block; font-size: 13px; color: #aaa; margin-bottom: 4px; }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px 12px;
+      background: #0f0f23;
+      border: 1px solid #2a2a5e;
+      border-radius: 6px;
+      color: #e0e0e0;
+      font-size: 14px;
+      margin-bottom: 12px;
+      font-family: inherit;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #ff4444;
+    }
+    textarea { resize: vertical; min-height: 60px; }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      margin-bottom: 8px;
+    }
+    .btn-primary { background: #ff4444; color: #fff; }
+    .btn-primary:hover { background: #e03c3c; }
+    .btn-secondary { background: #2a2a5e; color: #e0e0e0; }
+    .btn-secondary:hover { background: #3a3a7e; }
+    .btn-success { background: #1b4332; color: #52b788; }
+    .btn-success:hover { background: #245a42; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .output {
+      background: #0a0a1a;
+      border: 1px solid #2a2a5e;
+      border-radius: 6px;
+      padding: 14px;
+      margin-top: 14px;
+      max-height: 400px;
+      overflow-y: auto;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 13px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .output.hidden { display: none; }
+
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #555;
+      border-top-color: #ff4444;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .log-entry { padding: 4px 0; border-bottom: 1px solid #1a1a3e; }
+    .log-entry.info { color: #7ec8e3; }
+    .log-entry.success { color: #52b788; }
+    .log-entry.error { color: #ff6b6b; }
+
+    .full-width { grid-column: 1 / -1; }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <h1>YouTube Automation Hub</h1>
+  <span class="status" id="statusBadge">Checking...</span>
+</div>
+
+<div class="container">
+
+  <!-- Stats -->
+  <div class="stats-grid" id="statsGrid">
+    <div class="stat-card"><div class="value" id="statVideos">-</div><div class="label">Videos Generated</div></div>
+    <div class="stat-card"><div class="value" id="statPublished">-</div><div class="label">Published</div></div>
+    <div class="stat-card"><div class="value" id="statViews">-</div><div class="label">Total Views</div></div>
+    <div class="stat-card"><div class="value" id="statEngagement">-</div><div class="label">Avg Engagement</div></div>
+    <div class="stat-card"><div class="value" id="statChannels">-</div><div class="label">Channels</div></div>
+    <div class="stat-card"><div class="value" id="statCost">-</div><div class="label">AI Cost (Month)</div></div>
+  </div>
+
+  <div class="panels">
+
+    <!-- Generate Script -->
+    <div class="panel">
+      <h2>Generate Script</h2>
+      <label>Topic</label>
+      <input type="text" id="scriptTopic" placeholder="e.g. Top 5 AI Tools in 2026">
+      <label>Content Type</label>
+      <select id="scriptType">
+        <option value="short">Short (60s)</option>
+        <option value="medium">Medium (5 min)</option>
+        <option value="long">Long (20 min)</option>
+      </select>
+      <button class="btn btn-primary" id="btnScript" onclick="generateScript()">Generate Script</button>
+      <div class="output hidden" id="scriptOutput"></div>
+    </div>
+
+    <!-- Trending Topics -->
+    <div class="panel">
+      <h2>Trending Topics</h2>
+      <label>Niche</label>
+      <input type="text" id="trendNiche" placeholder="e.g. tech, gaming, cooking (or leave empty)">
+      <button class="btn btn-secondary" id="btnTrending" onclick="getTrending()">Find Trending Topics</button>
+      <div class="output hidden" id="trendingOutput"></div>
+    </div>
+
+    <!-- Full Pipeline -->
+    <div class="panel">
+      <h2>Full Pipeline</h2>
+      <p style="font-size:13px; color:#888; margin-bottom:12px;">Research + Script + Thumbnail + Video + Upload</p>
+      <label>Topic</label>
+      <input type="text" id="pipelineTopic" placeholder="e.g. How AI is Changing Everything">
+      <label>Content Type</label>
+      <select id="pipelineType">
+        <option value="short">Short</option>
+        <option value="medium">Medium</option>
+        <option value="long">Long</option>
+      </select>
+      <button class="btn btn-success" id="btnPipeline" onclick="runPipeline()">Run Full Pipeline</button>
+      <div class="output hidden" id="pipelineOutput"></div>
+    </div>
+
+    <!-- Competitor Analysis -->
+    <div class="panel">
+      <h2>Competitor Analysis</h2>
+      <label>Channel URLs (one per line)</label>
+      <textarea id="competitorUrls" placeholder="https://www.youtube.com/@ChannelName"></textarea>
+      <button class="btn btn-secondary" id="btnCompetitors" onclick="analyzeCompetitors()">Analyze</button>
+      <div class="output hidden" id="competitorOutput"></div>
+    </div>
+
+    <!-- Activity Log -->
+    <div class="panel full-width">
+      <h2>Activity Log</h2>
+      <div class="output" id="activityLog" style="min-height:120px;">Waiting for activity...</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const API = '';
+
+  function log(msg, type = 'info') {
+    const el = document.getElementById('activityLog');
+    const time = new Date().toLocaleTimeString();
+    el.innerHTML += `<div class="log-entry ${type}">[${time}] ${msg}</div>`;
+    el.scrollTop = el.scrollHeight;
+  }
+
+  function showOutput(id, data) {
+    const el = document.getElementById(id);
+    el.classList.remove('hidden');
+    if (typeof data === 'string') {
+      el.textContent = data;
+    } else {
+      el.textContent = JSON.stringify(data, null, 2);
+    }
+  }
+
+  function setLoading(btnId, loading) {
+    const btn = document.getElementById(btnId);
+    if (loading) {
+      btn.disabled = true;
+      btn.dataset.origText = btn.textContent;
+      btn.innerHTML = '<span class="spinner"></span> Working...';
+    } else {
+      btn.disabled = false;
+      btn.textContent = btn.dataset.origText;
+    }
+  }
+
+  async function apiCall(endpoint, options = {}) {
+    const res = await fetch(API + endpoint, {
+      headers: { 'Content-Type': 'application/json' },
+      ...options
+    });
+    return res.json();
+  }
+
+  // Health check
+  async function checkHealth() {
+    try {
+      const data = await apiCall('/api/health');
+      const badge = document.getElementById('statusBadge');
+      badge.textContent = 'Online';
+      badge.className = 'status online';
+    } catch {
+      const badge = document.getElementById('statusBadge');
+      badge.textContent = 'Offline';
+      badge.className = 'status offline';
+    }
+  }
+
+  // Load stats
+  async function loadStats() {
+    try {
+      const s = await apiCall('/api/stats');
+      document.getElementById('statVideos').textContent = s.videosGenerated;
+      document.getElementById('statPublished').textContent = s.videosPublished;
+      document.getElementById('statViews').textContent = s.totalViews;
+      document.getElementById('statEngagement').textContent = s.avgEngagement + '%';
+      document.getElementById('statChannels').textContent = s.channelsConnected;
+      document.getElementById('statCost').textContent = '$' + s.aiCostThisMonth;
+    } catch {}
+  }
+
+  // Generate Script
+  async function generateScript() {
+    const topic = document.getElementById('scriptTopic').value.trim();
+    if (!topic) return alert('Enter a topic');
+
+    setLoading('btnScript', true);
+    log(`Generating script for "${topic}"...`);
+
+    try {
+      const data = await apiCall('/api/script', {
+        method: 'POST',
+        body: JSON.stringify({
+          topic,
+          contentType: document.getElementById('scriptType').value
+        })
+      });
+      showOutput('scriptOutput', data);
+      log(`Script generated: "${data.title || topic}"`, 'success');
+    } catch (err) {
+      log(`Script generation failed: ${err.message}`, 'error');
+      showOutput('scriptOutput', 'Error: ' + err.message);
+    }
+    setLoading('btnScript', false);
+  }
+
+  // Trending Topics
+  async function getTrending() {
+    const niche = document.getElementById('trendNiche').value.trim();
+    setLoading('btnTrending', true);
+    log(`Finding trending topics${niche ? ` in "${niche}"` : ''}...`);
+
+    try {
+      const url = niche ? `/api/trending?niche=${encodeURIComponent(niche)}` : '/api/trending';
+      const data = await apiCall(url);
+      showOutput('trendingOutput', data);
+      log(`Found ${Array.isArray(data) ? data.length : '?'} trending topics`, 'success');
+    } catch (err) {
+      log(`Trending lookup failed: ${err.message}`, 'error');
+      showOutput('trendingOutput', 'Error: ' + err.message);
+    }
+    setLoading('btnTrending', false);
+  }
+
+  // Full Pipeline
+  async function runPipeline() {
+    const topic = document.getElementById('pipelineTopic').value.trim();
+    if (!topic) return alert('Enter a topic');
+
+    if (!confirm(`This will run the full pipeline for "${topic}". This may take several minutes and use API credits. Continue?`)) return;
+
+    setLoading('btnPipeline', true);
+    log(`Starting full pipeline for "${topic}"...`);
+
+    try {
+      const data = await apiCall('/api/pipeline', {
+        method: 'POST',
+        body: JSON.stringify({
+          topic,
+          contentType: document.getElementById('pipelineType').value
+        })
+      });
+      showOutput('pipelineOutput', data);
+      if (data.videoUrl) {
+        log(`Pipeline complete! Video: ${data.videoUrl}`, 'success');
+      } else {
+        log('Pipeline completed', 'success');
+      }
+      loadStats();
+    } catch (err) {
+      log(`Pipeline failed: ${err.message}`, 'error');
+      showOutput('pipelineOutput', 'Error: ' + err.message);
+    }
+    setLoading('btnPipeline', false);
+  }
+
+  // Competitor Analysis
+  async function analyzeCompetitors() {
+    const raw = document.getElementById('competitorUrls').value.trim();
+    if (!raw) return alert('Enter at least one channel URL');
+
+    const channelUrls = raw.split('\n').map(u => u.trim()).filter(Boolean);
+    setLoading('btnCompetitors', true);
+    log(`Analyzing ${channelUrls.length} competitor(s)...`);
+
+    try {
+      const data = await apiCall('/api/competitors', {
+        method: 'POST',
+        body: JSON.stringify({ channelUrls })
+      });
+      showOutput('competitorOutput', data);
+      log('Competitor analysis complete', 'success');
+    } catch (err) {
+      log(`Competitor analysis failed: ${err.message}`, 'error');
+      showOutput('competitorOutput', 'Error: ' + err.message);
+    }
+    setLoading('btnCompetitors', false);
+  }
+
+  // Init
+  checkHealth();
+  loadStats();
+  setInterval(checkHealth, 30000);
+</script>
+
+</body>
+</html>
